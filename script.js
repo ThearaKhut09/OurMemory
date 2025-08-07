@@ -1,5 +1,6 @@
 // Memory storage
 let memories = [];
+let currentMemoryId = null; // Track current memory for editing/deleting
 
 // DOM elements
 const memoryForm = document.getElementById('memory-form');
@@ -7,7 +8,12 @@ const memoriesGrid = document.getElementById('memories-grid');
 const imageInput = document.getElementById('memory-image');
 const imagePreview = document.getElementById('image-preview');
 const modal = document.getElementById('memory-modal');
-const successMessage = document.getElementById('success-message');
+const editModal = document.getElementById('edit-modal');
+const confirmModal = document.getElementById('confirm-modal');
+const editForm = document.getElementById('edit-form');
+const editImageInput = document.getElementById('edit-image');
+const editImagePreview = document.getElementById('edit-image-preview');
+const notificationContainer = document.getElementById('notification-container');
 
 // Initialize the app
 document.addEventListener('DOMContentLoaded', function() {
@@ -22,8 +28,14 @@ function setupEventListeners() {
     // Form submission
     memoryForm.addEventListener('submit', handleFormSubmit);
     
+    // Edit form submission
+    editForm.addEventListener('submit', handleEditSubmit);
+    
     // Image upload
     imageInput.addEventListener('change', handleImageUpload);
+    editImageInput.addEventListener('change', function(e) {
+        handleImageUpload(e, 'edit-image-preview');
+    });
     
     // Modal close
     document.querySelector('.close-modal').addEventListener('click', closeModal);
@@ -33,28 +45,50 @@ function setupEventListeners() {
         }
     });
     
-    // Drag and drop for image upload
-    const fileUploadLabel = document.querySelector('.file-upload-label');
-    
-    fileUploadLabel.addEventListener('dragover', function(e) {
-        e.preventDefault();
-        this.style.background = 'rgba(255, 107, 157, 0.2)';
-    });
-    
-    fileUploadLabel.addEventListener('dragleave', function(e) {
-        e.preventDefault();
-        this.style.background = 'rgba(255, 107, 157, 0.05)';
-    });
-    
-    fileUploadLabel.addEventListener('drop', function(e) {
-        e.preventDefault();
-        this.style.background = 'rgba(255, 107, 157, 0.05)';
-        
-        const files = e.dataTransfer.files;
-        if (files.length > 0 && files[0].type.startsWith('image/')) {
-            imageInput.files = files;
-            handleImageUpload({ target: imageInput });
+    // Edit modal close
+    editModal.addEventListener('click', function(e) {
+        if (e.target === editModal) {
+            closeEditModal();
         }
+    });
+    
+    // Confirm modal close
+    confirmModal.addEventListener('click', function(e) {
+        if (e.target === confirmModal) {
+            closeConfirmModal();
+        }
+    });
+    
+    // Drag and drop for image upload
+    setupDragAndDrop('.file-upload-label', imageInput);
+}
+
+// Setup drag and drop functionality
+function setupDragAndDrop(labelSelector, inputElement) {
+    const fileUploadLabels = document.querySelectorAll(labelSelector);
+    
+    fileUploadLabels.forEach(label => {
+        label.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.style.background = 'rgba(255, 107, 157, 0.2)';
+        });
+        
+        label.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.style.background = 'rgba(255, 107, 157, 0.05)';
+        });
+        
+        label.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.style.background = 'rgba(255, 107, 157, 0.05)';
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0 && files[0].type.startsWith('image/')) {
+                inputElement.files = files;
+                const previewId = inputElement.id === 'edit-image' ? 'edit-image-preview' : 'image-preview';
+                handleImageUpload({ target: inputElement }, previewId);
+            }
+        });
     });
 }
 
@@ -168,8 +202,8 @@ function saveMemory(memory) {
     const addMemorySection = document.getElementById('add-memory');
     addMemorySection.classList.remove('show');
     
-    // Show success message
-    showSuccessMessage();
+    // Show success notification
+    showNotification('success', 'Memory Saved!', 'Your beautiful memory has been saved successfully.');
     
     // Refresh memories display
     displayMemories();
@@ -181,18 +215,20 @@ function saveMemory(memory) {
 }
 
 // Handle image upload and preview
-function handleImageUpload(e) {
+function handleImageUpload(e, previewId = 'image-preview') {
     const file = e.target.files[0];
+    const preview = document.getElementById(previewId);
+    
     if (file) {
         if (file.type.startsWith('image/')) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                imagePreview.innerHTML = `
+                preview.innerHTML = `
                     <img src="${e.target.result}" alt="Preview" style="max-width: 100%; max-height: 200px; border-radius: 10px; box-shadow: 0 10px 30px rgba(255, 107, 157, 0.2);">
                 `;
                 
                 // Add animation to preview
-                const img = imagePreview.querySelector('img');
+                const img = preview.querySelector('img');
                 img.style.opacity = '0';
                 img.style.transform = 'scale(0.8)';
                 
@@ -204,7 +240,7 @@ function handleImageUpload(e) {
             };
             reader.readAsDataURL(file);
         } else {
-            alert('Please select a valid image file.');
+            showNotification('error', 'Invalid File', 'Please select a valid image file.');
             e.target.value = '';
         }
     }
@@ -279,6 +315,8 @@ function openMemoryModal(memoryId) {
     const memory = memories.find(m => m.id === memoryId);
     if (!memory) return;
     
+    currentMemoryId = memoryId; // Store for edit/delete operations
+    
     document.getElementById('modal-title').textContent = memory.title;
     document.getElementById('modal-date').textContent = formatDate(memory.date);
     document.getElementById('modal-description').textContent = memory.description;
@@ -296,20 +334,201 @@ function openMemoryModal(memoryId) {
     document.body.style.overflow = 'hidden';
 }
 
+// Open edit modal
+function openEditModal() {
+    if (!currentMemoryId) return;
+    
+    const memory = memories.find(m => m.id === currentMemoryId);
+    if (!memory) return;
+    
+    // Populate edit form
+    document.getElementById('edit-title').value = memory.title;
+    document.getElementById('edit-description').value = memory.description;
+    document.getElementById('edit-date').value = memory.date;
+    
+    // Show current image if exists
+    if (memory.image) {
+        editImagePreview.innerHTML = `
+            <img src="${memory.image}" alt="Current Image" style="max-width: 100%; max-height: 200px; border-radius: 10px; box-shadow: 0 10px 30px rgba(255, 107, 157, 0.2);">
+        `;
+    } else {
+        editImagePreview.innerHTML = '';
+    }
+    
+    // Close main modal and open edit modal
+    modal.style.display = 'none';
+    editModal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+
+// Handle edit form submission
+function handleEditSubmit(e) {
+    e.preventDefault();
+    
+    if (!currentMemoryId) return;
+    
+    const formData = new FormData(editForm);
+    const memoryIndex = memories.findIndex(m => m.id === currentMemoryId);
+    
+    if (memoryIndex === -1) return;
+    
+    // Update memory data
+    memories[memoryIndex].title = formData.get('title');
+    memories[memoryIndex].description = formData.get('description');
+    memories[memoryIndex].date = formData.get('date');
+    
+    // Handle image update
+    const imageFile = formData.get('image');
+    if (imageFile && imageFile.size > 0) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            memories[memoryIndex].image = e.target.result;
+            saveEditedMemory();
+        };
+        reader.readAsDataURL(imageFile);
+    } else {
+        saveEditedMemory();
+    }
+}
+
+// Save edited memory
+function saveEditedMemory() {
+    localStorage.setItem('ourMemories', JSON.stringify(memories));
+    
+    // Close edit modal
+    closeEditModal();
+    
+    // Show success notification
+    showNotification('success', 'Memory Updated!', 'Your memory has been successfully updated.');
+    
+    // Refresh memories display
+    displayMemories();
+    
+    // Reset current memory ID
+    currentMemoryId = null;
+}
+
+// Confirm delete
+function confirmDelete() {
+    if (!currentMemoryId) return;
+    
+    // Close main modal and show confirmation
+    modal.style.display = 'none';
+    confirmModal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+
+// Delete memory
+function deleteMemory() {
+    if (!currentMemoryId) return;
+    
+    const memoryIndex = memories.findIndex(m => m.id === currentMemoryId);
+    if (memoryIndex === -1) return;
+    
+    // Remove memory from array
+    memories.splice(memoryIndex, 1);
+    localStorage.setItem('ourMemories', JSON.stringify(memories));
+    
+    // Close confirmation modal
+    closeConfirmModal();
+    
+    // Show success notification
+    showNotification('success', 'Memory Deleted!', 'The memory has been successfully deleted.');
+    
+    // Refresh memories display
+    displayMemories();
+    
+    // Reset current memory ID
+    currentMemoryId = null;
+}
+
 // Close memory modal
 function closeModal() {
     modal.style.display = 'none';
     document.body.style.overflow = 'auto';
+    currentMemoryId = null;
 }
 
-// Show success message
-function showSuccessMessage() {
-    successMessage.classList.add('show');
-    
-    setTimeout(() => {
-        successMessage.classList.remove('show');
-    }, 3000);
+// Close edit modal
+function closeEditModal() {
+    editModal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+    editForm.reset();
+    editImagePreview.innerHTML = '';
 }
+
+// Close confirmation modal
+function closeConfirmModal() {
+    confirmModal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+// Notification System
+function showNotification(type, title, message, duration = 5000) {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    
+    const icons = {
+        success: 'fas fa-check-circle',
+        error: 'fas fa-exclamation-circle',
+        warning: 'fas fa-exclamation-triangle',
+        info: 'fas fa-info-circle'
+    };
+    
+    notification.innerHTML = `
+        <div class="notification-icon">
+            <i class="${icons[type]}"></i>
+        </div>
+        <div class="notification-content">
+            <div class="notification-title">${title}</div>
+            <div class="notification-message">${message}</div>
+        </div>
+        <button class="notification-close" onclick="removeNotification(this.parentNode)">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="notification-progress"></div>
+    `;
+    
+    notificationContainer.appendChild(notification);
+    
+    // Auto remove after duration
+    setTimeout(() => {
+        removeNotification(notification);
+    }, duration);
+    
+    // Add vibration for mobile devices
+    if (navigator.vibrate && (type === 'success' || type === 'error')) {
+        navigator.vibrate(type === 'success' ? [100] : [200, 100, 200]);
+    }
+}
+
+// Remove notification
+function removeNotification(notification) {
+    if (notification && notification.parentNode) {
+        notification.style.animation = 'slideOutRight 0.3s ease';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }
+}
+
+// Add slideOutRight animation to CSS (add this to styles.css later)
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideOutRight {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);
 
 // Load sample memories for demonstration
 function loadSampleMemories() {
@@ -400,7 +619,11 @@ addInteractiveAnimations();
 document.addEventListener('keydown', function(e) {
     // Escape key to close modal or hide add-memory section
     if (e.key === 'Escape') {
-        if (modal.style.display === 'block') {
+        if (editModal.style.display === 'block') {
+            closeEditModal();
+        } else if (confirmModal.style.display === 'block') {
+            closeConfirmModal();
+        } else if (modal.style.display === 'block') {
             closeModal();
         } else {
             const addMemorySection = document.getElementById('add-memory');
@@ -410,6 +633,11 @@ document.addEventListener('keydown', function(e) {
         }
     }
     
+    // Enter key to confirm delete in confirmation modal
+    if (e.key === 'Enter' && confirmModal.style.display === 'block') {
+        deleteMemory();
+    }
+    
     // Ctrl/Cmd + N to focus on new memory form
     if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
         e.preventDefault();
@@ -417,6 +645,12 @@ document.addEventListener('keydown', function(e) {
         setTimeout(() => {
             document.getElementById('memory-title').focus();
         }, 500);
+    }
+    
+    // Ctrl/Cmd + E to edit current memory (if modal is open)
+    if ((e.ctrlKey || e.metaKey) && e.key === 'e' && modal.style.display === 'block') {
+        e.preventDefault();
+        openEditModal();
     }
     
     // Ctrl/Cmd + D to toggle dark mode
@@ -444,9 +678,15 @@ document.addEventListener('touchend', function(e) {
     const deltaX = touchStartX - touchEndX;
     const deltaY = touchStartY - touchEndY;
     
-    // Swipe left on modal to close (mobile)
-    if (modal.style.display === 'block' && Math.abs(deltaX) > Math.abs(deltaY) && deltaX > 50) {
-        closeModal();
+    // Swipe left on any modal to close (mobile)
+    if (Math.abs(deltaX) > Math.abs(deltaY) && deltaX > 50) {
+        if (editModal.style.display === 'block') {
+            closeEditModal();
+        } else if (confirmModal.style.display === 'block') {
+            closeConfirmModal();
+        } else if (modal.style.display === 'block') {
+            closeModal();
+        }
     }
     
     touchStartX = 0;
@@ -456,6 +696,20 @@ document.addEventListener('touchend', function(e) {
 // Add loading animation for form submission
 memoryForm.addEventListener('submit', function() {
     const submitBtn = this.querySelector('.submit-btn');
+    const originalText = submitBtn.innerHTML;
+    
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+    submitBtn.disabled = true;
+    
+    setTimeout(() => {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }, 1500);
+});
+
+// Add loading animation for edit form submission
+editForm.addEventListener('submit', function() {
+    const submitBtn = this.querySelector('.save-btn');
     const originalText = submitBtn.innerHTML;
     
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
