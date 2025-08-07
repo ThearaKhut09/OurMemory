@@ -17,9 +17,11 @@ const notificationContainer = document.getElementById('notification-container');
 
 // Initialize the app
 document.addEventListener('DOMContentLoaded', function() {
+    loadLanguagePreference(); // Load language first
     loadMemories();
     setupEventListeners();
     setupThemeToggle();
+    setupLanguageSelector();
     loadSampleMemories(); // Add some sample memories for demo
 });
 
@@ -90,6 +92,41 @@ function setupDragAndDrop(labelSelector, inputElement) {
             }
         });
     });
+}
+
+// Setup language selector functionality
+function setupLanguageSelector() {
+    const languageToggle = document.querySelector('.language-toggle');
+    const languageDropdown = document.querySelector('.language-dropdown');
+    const langOptions = document.querySelectorAll('.lang-option');
+    
+    // Update active language option
+    function updateActiveLanguage() {
+        langOptions.forEach(option => {
+            option.classList.remove('active');
+            if (option.dataset.lang === currentLanguage) {
+                option.classList.add('active');
+            }
+        });
+    }
+    
+    // Initialize active language
+    updateActiveLanguage();
+    
+    // Language option click handlers are handled by the changeLanguage function
+    // which is defined in languages.js and called via onclick attributes
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.language-selector')) {
+            languageDropdown.style.opacity = '0';
+            languageDropdown.style.visibility = 'hidden';
+            languageDropdown.style.transform = 'translateY(-10px)';
+        }
+    });
+    
+    // Update active language when language changes
+    window.addEventListener('languageChanged', updateActiveLanguage);
 }
 
 // Setup theme toggle functionality
@@ -203,7 +240,7 @@ function saveMemory(memory) {
     addMemorySection.classList.remove('show');
     
     // Show success notification
-    showNotification('success', 'Memory Saved!', 'Your beautiful memory has been saved successfully.');
+    showNotification('success', getText('memorySavedTitle'), getText('memorySavedMessage'));
     
     // Refresh memories display
     displayMemories();
@@ -240,7 +277,7 @@ function handleImageUpload(e, previewId = 'image-preview') {
             };
             reader.readAsDataURL(file);
         } else {
-            showNotification('error', 'Invalid File', 'Please select a valid image file.');
+            showNotification('error', getText('invalidFileTitle'), getText('invalidFileMessage'));
             e.target.value = '';
         }
     }
@@ -264,7 +301,7 @@ function displayMemories() {
         memoriesGrid.innerHTML = `
             <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: ${emptyStateColor}; font-size: 1.2rem;">
                 <i class="fas fa-heart" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
-                No memories yet. Create your first beautiful memory above! 💕
+                ${getText('noMemoriesText')}
             </div>
         `;
         return;
@@ -307,7 +344,16 @@ function formatDate(dateString) {
         month: 'long', 
         day: 'numeric' 
     };
-    return date.toLocaleDateString('en-US', options);
+    
+    // Use appropriate locale based on current language
+    const locale = currentLanguage === 'km' ? 'km-KH' : 'en-US';
+    
+    try {
+        return date.toLocaleDateString(locale, options);
+    } catch (e) {
+        // Fallback to English if Khmer locale is not supported
+        return date.toLocaleDateString('en-US', options);
+    }
 }
 
 // Open memory modal
@@ -399,7 +445,7 @@ function saveEditedMemory() {
     closeEditModal();
     
     // Show success notification
-    showNotification('success', 'Memory Updated!', 'Your memory has been successfully updated.');
+    showNotification('success', getText('memoryUpdatedTitle'), getText('memoryUpdatedMessage'));
     
     // Refresh memories display
     displayMemories();
@@ -433,7 +479,7 @@ function deleteMemory() {
     closeConfirmModal();
     
     // Show success notification
-    showNotification('success', 'Memory Deleted!', 'The memory has been successfully deleted.');
+    showNotification('success', getText('memoryDeletedTitle'), getText('memoryDeletedMessage'));
     
     // Refresh memories display
     displayMemories();
@@ -534,48 +580,15 @@ document.head.appendChild(style);
 function loadSampleMemories() {
     const stored = localStorage.getItem('ourMemories');
     if (!stored || JSON.parse(stored).length === 0) {
-        const sampleMemories = [
-            {
-                id: 1,
-                title: "Our First Date ❤️",
-                description: "That magical evening at the Italian restaurant where we talked for hours and realized we had so much in common. The way you laughed at my silly jokes made my heart skip a beat.",
-                date: "2024-02-14",
-                image: "./image/image1.jpg",
-                createdAt: new Date().toISOString()
-            },
-            {
-                id: 2,
-                title: "Weekend Getaway 🏖️",
-                description: "Our spontaneous trip to the beach where we watched the sunset together. Building sandcastles and sharing ice cream while the waves crashed nearby - pure bliss.",
-                date: "2024-06-15",
-                image: "./image/image2.jpg",
-                createdAt: new Date().toISOString()
-            },
-            {
-                id: 3,
-                title: "Movie Night Cuddles 🎬",
-                description: "Cozy evening watching our favorite romantic comedy. You fell asleep on my shoulder during the credits, and I didn't want to move because you looked so peaceful.",
-                date: "2024-07-20",
-                image: "./image/image3.jpg",
-                createdAt: new Date().toISOString()
-            },
-            {
-                id: 4,
-                title: "Anniversary Celebration 💐",
-                description: "Celebrating our special milestone with dinner at our favorite restaurant. The flowers you surprised me with were absolutely beautiful and made the evening even more perfect.",
-                date: "2024-08-05",
-                image: "./image/image4.jpg",
-                createdAt: new Date().toISOString()
-            },
-            {
-                id: 5,
-                title: "Adventure Together 🌟",
-                description: "Our exciting adventure exploring new places together. Every moment with you feels like a new discovery, and I love how we create beautiful memories wherever we go.",
-                date: "2024-07-30",
-                image: "./image/image5.jpg",
-                createdAt: new Date().toISOString()
-            }
-        ];
+        const sampleMemoriesData = getSampleMemories();
+        const sampleMemories = sampleMemoriesData.map((sample, index) => ({
+            id: index + 1,
+            title: sample.title,
+            description: sample.description,
+            date: ["2024-02-14", "2024-06-15", "2024-07-20", "2024-08-05", "2024-07-30"][index],
+            image: `./image/image${index + 1}.jpg`,
+            createdAt: new Date().toISOString()
+        }));
         
         memories = sampleMemories;
         localStorage.setItem('ourMemories', JSON.stringify(memories));
