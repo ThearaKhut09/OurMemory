@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Memory - Love Stories</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Floating Hearts Background -->
+    <div class="hearts-container">
+        <div class="heart"></div>
+        <div class="heart"></div>
+        <div class="heart"></div>
+        <div class="heart"></div>
+        <div class="heart"></div>
+        <div class="heart"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="logo">
+                <i class="fas fa-heart"></i>
+                <span>Our Memory</span>
+            </div>
+            <div class="nav-controls">
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <div class="nav-menu" id="nav-menu">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#memories" class="nav-link">Memories</a>
+                <a href="#add-memory" class="nav-link">Add Memory</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    <span class="romantic-text">Our Beautiful</span>
+                    <span class="memory-text">Journey Together</span>
+                </h1>
+                <p class="hero-subtitle">Capturing every precious moment of our love story</p>
+                <button class="cta-button" onclick="scrollToSection('add-memory')">
+                    <i class="fas fa-plus"></i>
+                    Create New Memory
+                </button>
+            </div>
+            <div class="hero-visual">
+                <div class="floating-card">
+                    <div class="card-3d">
+                        <i class="fas fa-camera-retro"></i>
+                        <span>Memories</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Add Memory Section -->
+    <section id="add-memory" class="add-memory-section">
+        <div class="container">
+            <h2 class="section-title">Add a New Memory</h2>
+            <div class="memory-form-container">
+                <form id="memory-form" class="memory-form">
+                    <div class="form-group">
+                        <label for="memory-title">Memory Title</label>
+                        <input type="text" id="memory-title" name="title" placeholder="Our first date, vacation, etc..." required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="memory-description">Description</label>
+                        <textarea id="memory-description" name="description" placeholder="Tell us about this beautiful moment..." rows="4" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="memory-date">Date</label>
+                        <input type="date" id="memory-date" name="date" required>
+                    </div>
+                    
+                    <div class="form-group file-upload-group">
+                        <label for="memory-image" class="file-upload-label">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Upload Image</span>
+                            <small>Click to select or drag & drop</small>
+                        </label>
+                        <input type="file" id="memory-image" name="image" accept="image/*" required>
+                        <div class="image-preview" id="image-preview"></div>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-heart"></i>
+                        Save Memory
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Memories Gallery -->
+    <section id="memories" class="memories-section">
+        <div class="container">
+            <h2 class="section-title">Our Beautiful Memories</h2>
+            <div class="memories-grid" id="memories-grid">
+                <!-- Memories will be dynamically added here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Memory Modal -->
+    <div id="memory-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-body">
+                <img id="modal-image" src="" alt="">
+                <div class="modal-info">
+                    <h3 id="modal-title"></h3>
+                    <p id="modal-date"></p>
+                    <p id="modal-description"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Message -->
+    <div id="success-message" class="success-message">
+        <i class="fas fa-check-circle"></i>
+        <span>Memory saved successfully!</span>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
