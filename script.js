@@ -17,12 +17,17 @@ const notificationContainer = document.getElementById('notification-container');
 
 // Initialize the app
 document.addEventListener('DOMContentLoaded', function() {
-    loadLanguagePreference(); // Load language first
-    loadMemories();
-    setupEventListeners();
-    setupThemeToggle();
-    setupLanguageSelector();
-    loadSampleMemories(); // Add some sample memories for demo
+    // Load language first and wait for it to complete
+    loadLanguagePreference();
+    
+    // Small delay to ensure language is loaded
+    setTimeout(() => {
+        loadMemories();
+        setupEventListeners();
+        setupThemeToggle();
+        setupLanguageSelector();
+        loadSampleMemories();
+    }, 100);
 });
 
 // Setup event listeners
@@ -99,6 +104,12 @@ function setupLanguageSelector() {
     const languageToggle = document.querySelector('.language-toggle');
     const languageDropdown = document.querySelector('.language-dropdown');
     const langOptions = document.querySelectorAll('.lang-option');
+    const languageSelector = document.querySelector('.language-selector');
+    
+    if (!languageToggle || !languageDropdown) {
+        console.warn('Language selector elements not found');
+        return;
+    }
     
     // Update active language option
     function updateActiveLanguage() {
@@ -110,23 +121,75 @@ function setupLanguageSelector() {
         });
     }
     
+    // Toggle dropdown function
+    function toggleDropdown(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const isShowing = languageDropdown.classList.contains('show');
+        
+        if (isShowing) {
+            hideDropdown();
+        } else {
+            showDropdown();
+        }
+    }
+    
+    // Hide dropdown function
+    function hideDropdown() {
+        languageDropdown.classList.remove('show');
+        if (languageSelector) {
+            languageSelector.classList.remove('active');
+        }
+    }
+    
+    // Show dropdown function
+    function showDropdown() {
+        languageDropdown.classList.add('show');
+        if (languageSelector) {
+            languageSelector.classList.add('active');
+        }
+    }
+    
     // Initialize active language
     updateActiveLanguage();
     
-    // Language option click handlers are handled by the changeLanguage function
-    // which is defined in languages.js and called via onclick attributes
+    // Add click event to language toggle
+    languageToggle.addEventListener('click', toggleDropdown);
+    
+    // Prevent dropdown from closing when clicking on it
+    languageDropdown.addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
     
     // Close dropdown when clicking outside
     document.addEventListener('click', function(e) {
         if (!e.target.closest('.language-selector')) {
-            languageDropdown.style.opacity = '0';
-            languageDropdown.style.visibility = 'hidden';
-            languageDropdown.style.transform = 'translateY(-10px)';
+            hideDropdown();
         }
+    });
+    
+    // Handle language option clicks
+    langOptions.forEach(option => {
+        option.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const langCode = this.dataset.lang;
+            if (langCode && typeof changeLanguage === 'function') {
+                changeLanguage(langCode);
+                hideDropdown();
+            }
+        });
     });
     
     // Update active language when language changes
     window.addEventListener('languageChanged', updateActiveLanguage);
+    
+    // Close dropdown on escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            hideDropdown();
+        }
+    });
 }
 
 // Setup theme toggle functionality

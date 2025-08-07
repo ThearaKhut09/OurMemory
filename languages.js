@@ -183,15 +183,32 @@ function changeLanguage(langCode) {
         updatePageLanguage();
         
         // Trigger custom event for language change
-        window.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: langCode } }));
+        const event = new CustomEvent('languageChanged', { 
+            detail: { language: langCode },
+            bubbles: true
+        });
+        window.dispatchEvent(event);
+        
+        // Update language selector UI
+        const langOptions = document.querySelectorAll('.lang-option');
+        langOptions.forEach(option => {
+            option.classList.remove('active');
+            if (option.dataset.lang === langCode) {
+                option.classList.add('active');
+            }
+        });
         
         // Refresh memories with new language if they are sample memories
         const stored = localStorage.getItem('ourMemories');
         if (!stored || JSON.parse(stored).length === 0) {
-            loadSampleMemories();
+            if (typeof loadSampleMemories === 'function') {
+                loadSampleMemories();
+            }
         }
         
-        displayMemories();
+        if (typeof displayMemories === 'function') {
+            displayMemories();
+        }
     }
 }
 
