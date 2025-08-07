@@ -13,9 +13,7 @@ const successMessage = document.getElementById('success-message');
 document.addEventListener('DOMContentLoaded', function() {
     loadMemories();
     setupEventListeners();
-    setupNavigation();
     setupThemeToggle();
-    setupHamburgerMenu();
     loadSampleMemories(); // Add some sample memories for demo
 });
 
@@ -60,26 +58,6 @@ function setupEventListeners() {
     });
 }
 
-// Setup navigation and theme functionality
-function setupNavigation() {
-    const navLinks = document.querySelectorAll('.nav-link');
-    
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href').substring(1);
-            scrollToSection(targetId);
-            
-            // Update active nav link
-            navLinks.forEach(l => l.classList.remove('active'));
-            this.classList.add('active');
-        });
-    });
-    
-    // Update active nav on scroll
-    window.addEventListener('scroll', updateActiveNav);
-}
-
 // Setup theme toggle functionality
 function setupThemeToggle() {
     const themeToggle = document.getElementById('theme-toggle');
@@ -115,57 +93,6 @@ function updateThemeIcon(isDark) {
     }
 }
 
-// Setup hamburger menu functionality
-function setupHamburgerMenu() {
-    const hamburger = document.getElementById('hamburger');
-    const navMenu = document.getElementById('nav-menu');
-    const navLinks = document.querySelectorAll('.nav-link');
-    
-    // Toggle hamburger menu
-    hamburger.addEventListener('click', function() {
-        hamburger.classList.toggle('active');
-        navMenu.classList.toggle('active');
-        
-        // Prevent body scroll when menu is open
-        if (navMenu.classList.contains('active')) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'auto';
-        }
-    });
-    
-    // Close menu when clicking on nav links
-    navLinks.forEach(link => {
-        link.addEventListener('click', function() {
-            hamburger.classList.remove('active');
-            navMenu.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        });
-    });
-    
-    // Close menu when clicking outside
-    document.addEventListener('click', function(e) {
-        const isClickInsideNav = navMenu.contains(e.target);
-        const isClickOnHamburger = hamburger.contains(e.target);
-        const isClickOnThemeToggle = document.getElementById('theme-toggle').contains(e.target);
-        
-        if (!isClickInsideNav && !isClickOnHamburger && !isClickOnThemeToggle && navMenu.classList.contains('active')) {
-            hamburger.classList.remove('active');
-            navMenu.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-    });
-    
-    // Close menu on window resize to desktop view
-    window.addEventListener('resize', function() {
-        if (window.innerWidth > 768) {
-            hamburger.classList.remove('active');
-            navMenu.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-    });
-}
-
 // Scroll to section function
 function scrollToSection(sectionId) {
     const section = document.getElementById(sectionId);
@@ -178,29 +105,6 @@ function scrollToSection(sectionId) {
             behavior: 'smooth'
         });
     }
-}
-
-// Update active navigation based on scroll position
-function updateActiveNav() {
-    const sections = ['home', 'add-memory', 'memories'];
-    const navLinks = document.querySelectorAll('.nav-link');
-    const scrollPosition = window.scrollY + 200;
-    
-    sections.forEach((sectionId, index) => {
-        const section = document.getElementById(sectionId);
-        if (section) {
-            const sectionTop = section.offsetTop;
-            const sectionBottom = sectionTop + section.offsetHeight;
-            
-            if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
-                navLinks.forEach(link => link.classList.remove('active'));
-                const activeLink = document.querySelector(`[href="#${sectionId}"]`);
-                if (activeLink) {
-                    activeLink.classList.add('active');
-                }
-            }
-        }
-    });
 }
 
 // Handle form submission
@@ -454,18 +358,10 @@ addInteractiveAnimations();
 
 // Add keyboard shortcuts
 document.addEventListener('keydown', function(e) {
-    // Escape key to close modal or hamburger menu
+    // Escape key to close modal
     if (e.key === 'Escape') {
         if (modal.style.display === 'block') {
             closeModal();
-        } else {
-            const hamburger = document.getElementById('hamburger');
-            const navMenu = document.getElementById('nav-menu');
-            if (navMenu.classList.contains('active')) {
-                hamburger.classList.remove('active');
-                navMenu.classList.remove('active');
-                document.body.style.overflow = 'auto';
-            }
         }
     }
     
@@ -506,15 +402,6 @@ document.addEventListener('touchend', function(e) {
     // Swipe left on modal to close (mobile)
     if (modal.style.display === 'block' && Math.abs(deltaX) > Math.abs(deltaY) && deltaX > 50) {
         closeModal();
-    }
-    
-    // Swipe right to close hamburger menu
-    const navMenu = document.getElementById('nav-menu');
-    const hamburger = document.getElementById('hamburger');
-    if (navMenu.classList.contains('active') && Math.abs(deltaX) > Math.abs(deltaY) && deltaX < -50) {
-        hamburger.classList.remove('active');
-        navMenu.classList.remove('active');
-        document.body.style.overflow = 'auto';
     }
     
     touchStartX = 0;
