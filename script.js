@@ -97,6 +97,11 @@ function updateThemeIcon(isDark) {
 function scrollToSection(sectionId) {
     const section = document.getElementById(sectionId);
     if (section) {
+        // Show the add-memory section if it's being accessed
+        if (sectionId === 'add-memory') {
+            section.classList.add('show');
+        }
+        
         const headerHeight = document.querySelector('.header').offsetHeight;
         const targetPosition = section.offsetTop - headerHeight - 20;
         
@@ -105,6 +110,21 @@ function scrollToSection(sectionId) {
             behavior: 'smooth'
         });
     }
+}
+
+// Close add memory section
+function closeAddMemorySection() {
+    const addMemorySection = document.getElementById('add-memory');
+    addMemorySection.classList.remove('show');
+    
+    // Reset form when closing
+    const memoryForm = document.getElementById('memory-form');
+    memoryForm.reset();
+    const imagePreview = document.getElementById('image-preview');
+    imagePreview.innerHTML = '';
+    
+    // Scroll back to hero section
+    scrollToSection('home');
 }
 
 // Handle form submission
@@ -143,6 +163,10 @@ function saveMemory(memory) {
     // Reset form
     memoryForm.reset();
     imagePreview.innerHTML = '';
+    
+    // Hide the add-memory section after saving
+    const addMemorySection = document.getElementById('add-memory');
+    addMemorySection.classList.remove('show');
     
     // Show success message
     showSuccessMessage();
@@ -358,10 +382,15 @@ addInteractiveAnimations();
 
 // Add keyboard shortcuts
 document.addEventListener('keydown', function(e) {
-    // Escape key to close modal
+    // Escape key to close modal or hide add-memory section
     if (e.key === 'Escape') {
         if (modal.style.display === 'block') {
             closeModal();
+        } else {
+            const addMemorySection = document.getElementById('add-memory');
+            if (addMemorySection.classList.contains('show')) {
+                addMemorySection.classList.remove('show');
+            }
         }
     }
     

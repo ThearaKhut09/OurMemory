@@ -62,7 +62,12 @@
     <!-- Add Memory Section -->
     <section id="add-memory" class="add-memory-section">
         <div class="container">
-            <h2 class="section-title">Add a New Memory</h2>
+            <div class="section-header">
+                <h2 class="section-title">Add a New Memory</h2>
+                <button class="close-section-btn" onclick="closeAddMemorySection()" aria-label="Close add memory section">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
             <div class="memory-form-container">
                 <form id="memory-form" class="memory-form">
                     <div class="form-group">
