@@ -321,7 +321,7 @@ function loadSampleMemories() {
                 title: "Our First Date ❤️",
                 description: "That magical evening at the Italian restaurant where we talked for hours and realized we had so much in common. The way you laughed at my silly jokes made my heart skip a beat.",
                 date: "2024-02-14",
-                image: null,
+                image: "./image/image1.jpg",
                 createdAt: new Date().toISOString()
             },
             {
@@ -329,7 +329,7 @@ function loadSampleMemories() {
                 title: "Weekend Getaway 🏖️",
                 description: "Our spontaneous trip to the beach where we watched the sunset together. Building sandcastles and sharing ice cream while the waves crashed nearby - pure bliss.",
                 date: "2024-06-15",
-                image: null,
+                image: "./image/image2.jpg",
                 createdAt: new Date().toISOString()
             },
             {
@@ -337,7 +337,23 @@ function loadSampleMemories() {
                 title: "Movie Night Cuddles 🎬",
                 description: "Cozy evening watching our favorite romantic comedy. You fell asleep on my shoulder during the credits, and I didn't want to move because you looked so peaceful.",
                 date: "2024-07-20",
-                image: null,
+                image: "./image/image3.jpg",
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: 4,
+                title: "Anniversary Celebration 💐",
+                description: "Celebrating our special milestone with dinner at our favorite restaurant. The flowers you surprised me with were absolutely beautiful and made the evening even more perfect.",
+                date: "2024-08-05",
+                image: "./image/image4.jpg",
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: 5,
+                title: "Adventure Together 🌟",
+                description: "Our exciting adventure exploring new places together. Every moment with you feels like a new discovery, and I love how we create beautiful memories wherever we go.",
+                date: "2024-07-30",
+                image: "./image/image5.jpg",
                 createdAt: new Date().toISOString()
             }
         ];
