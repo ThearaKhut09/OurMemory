@@ -70,7 +70,7 @@ const languages = {
             },
             {
                 title: "She so Beautiful 💐",
-                description: "Celebrating our special anniversary dinner at our favorite restaurant. The flowers you arranged took my breath away and made the night even more perfect."
+               description: "She is the most beautiful person in my life, inside and out. Her kindness and compassion shine through in everything she does."
             },
             {
                 title: "Exploring Together 🌟",
@@ -148,7 +148,7 @@ const languages = {
             },
             {
                 title: "She so Beautiful 💐",
-                description: "Celebrating our special anniversary dinner at our favorite restaurant. The flowers you arranged took my breath away and made the night even more perfect."
+               description: "She is the most beautiful person in my life, inside and out. Her kindness and compassion shine through in everything she does."
             },
             {
                 title: "Exploring Together 🌟",
