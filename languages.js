@@ -57,24 +57,24 @@ const languages = {
         // Sample Memories (Khmer)
         sampleMemories: [
             {
-                title: "ការណាត់ជួបដំបូងរបស់យើង ❤️",
-                description: "យប់វេលាដ៏អស្ចារ្យនៅភោជនីយដ្ឋានអ៊ីតាលី ជាកន្លែងដែលយើងបាននិយាយគ្នារាប់ម៉ោង និងបានដឹងថាយើងមានអ្វីរួមគ្នាច្រើន។ របៀបដែលអ្នកសើចចំពោះរឿងកំប្លែងល្ងីល្ងើរបស់ខ្ញុំ បានធ្វើឱ្យបេះដូងខ្ញុំលោតខ្លាំង។"
+                title: "Lover",
+                description: "My favorite person in the world, the one who makes my heart skip a beat every time I see you. Your smile is my sunshine, and your laughter is my favorite melody."
             },
             {
-                title: "ការធ្វើដំណើរចុងសប្តាហ៍ 🏖️",
-                description: "ការធ្វើដំណើរដោយមិនបានគ្រោងទុកមុនរបស់យើងទៅឆ្នេរសមុទ្រ ជាកន្លែងដែលយើងបានមើលពេលថ្ងៃលិចជាមួយគ្នា។ ការសាងសាលាលំហ និងការបែងចែកការ៉េមអំឡុងពេលដែលរលកបក់បោកនៅក្បែរ - ភាពសុខដ៏ស្រស់ស្អាត។"
+                title: "Weekend Getaway 🏖️",
+                description: "Our spontaneous trip to the beach, where we watched the sunset together. The warm sand and sharing ice cream while the waves crashed nearby - pure bliss."
             },
             {
-                title: "យប់មើលកុនកំប្លែង 🎬",
-                description: "យប់ដ៏កក់ក្តៅក្នុងការមើលកុនកំប្លែងស្នេហាដែលយើងចូលចិត្ត។ អ្នកបានដេកលើស្មារបស់ខ្ញុំកំឡុងពេលក្រេឌីត ហើយខ្ញុំមិនចង់ផ្លាស់ទីនោះទេ ព្រោះអ្នកមើលទៅសុខស្រួលណាស់។"
+                title: "My Pretty",
+                description: "My favorite person in the world, the one who makes my heart skip a beat every time I see you. Your smile is my sunshine."
             },
             {
-                title: "ការអបអរសាទរខួបកំណើត 💐",
-                description: "ការអបអរសាទរកម្រិតសំខាន់ពិសេសរបស់យើងជាមួយអាហារពេលល្ងាចនៅភោជនីយដ្ឋានដែលយើងចូលចិត្ត។ ផ្កាដែលអ្នកបានធ្វើអោយខ្ញុំភ្ញាក់ផ្អើល មានភាពស្រស់ស្អាតមែនទែន និងបានធ្វើឱ្យយប់នោះកាន់តែល្អឥតខ្ចោះ។"
+                title: "She so Beautiful 💐",
+                description: "Celebrating our special anniversary dinner at our favorite restaurant. The flowers you arranged took my breath away and made the night even more perfect."
             },
             {
-                title: "ការផ្សងព្រេងជាមួយគ្នា 🌟",
-                description: "ការផ្សងព្រេងដ៏រំភើបរបស់យើងក្នុងការស្វែងរកកន្លែងថ្មីៗជាមួយគ្នា។ រាល់ពេលវេលាជាមួយអ្នកមានអារម្មណ៍ដូចជាការរកឃើញថ្មី ហើយខ្ញុំស្រលាញ់របៀបដែលយើងបង្កើតអនុស្សាវរីយ៍ដ៏ស្រស់ស្អាតនៅគ្រប់កន្លែងដែលយើងទៅ។"
+                title: "Exploring Together 🌟",
+                description: "Our exciting adventures in discovering new places together. Every moment with you feels like a new discovery, and I love how we create beautiful memories everywhere we go."
             }
         ]
     },
@@ -135,24 +135,24 @@ const languages = {
         // Sample Memories (English)
         sampleMemories: [
             {
-                title: "Our First Date ❤️",
-                description: "That magical evening at the Italian restaurant where we talked for hours and realized we had so much in common. The way you laughed at my silly jokes made my heart skip a beat."
+                title: "Lover",
+                description: "My favorite person in the world, the one who makes my heart skip a beat every time I see you. Your smile is my sunshine, and your laughter is my favorite melody."
             },
             {
                 title: "Weekend Getaway 🏖️",
-                description: "Our spontaneous trip to the beach where we watched the sunset together. Building sandcastles and sharing ice cream while the waves crashed nearby - pure bliss."
+                description: "Our spontaneous trip to the beach, where we watched the sunset together. The warm sand and sharing ice cream while the waves crashed nearby - pure bliss."
             },
             {
-                title: "Movie Night Cuddles 🎬",
-                description: "Cozy evening watching our favorite romantic comedy. You fell asleep on my shoulder during the credits, and I didn't want to move because you looked so peaceful."
+                title: "My Pretty",
+                description: "My favorite person in the world, the one who makes my heart skip a beat every time I see you. Your smile is my sunshine."
             },
             {
-                title: "Anniversary Celebration 💐",
-                description: "Celebrating our special milestone with dinner at our favorite restaurant. The flowers you surprised me with were absolutely beautiful and made the evening even more perfect."
+                title: "She so Beautiful 💐",
+                description: "Celebrating our special anniversary dinner at our favorite restaurant. The flowers you arranged took my breath away and made the night even more perfect."
             },
             {
-                title: "Adventure Together 🌟",
-                description: "Our exciting adventure exploring new places together. Every moment with you feels like a new discovery, and I love how we create beautiful memories wherever we go."
+                title: "Exploring Together 🌟",
+                description: "Our exciting adventures in discovering new places together. Every moment with you feels like a new discovery, and I love how we create beautiful memories everywhere we go."
             }
         ]
     }
