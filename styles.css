@@ -48,7 +48,7 @@ html {
 
 body {
     font-family: 'Poppins', sans-serif;
-    background: var(--background-primary);
+    background: linear-gradient(rgba(115, 110, 110, 0.4), rgba(73, 70, 70, 0.4)), url('image/image4.jpg') center/cover no-repeat fixed;
     color: var(--text-primary);
     overflow-x: hidden;
     position: relative;
@@ -475,7 +475,7 @@ body {
 .card-3d {
     width: 300px;
     height: 400px;
-    background: var(--card-background);
+    background: url('image/image1.jpg') center/cover no-repeat;
     -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(20px);
     border-radius: 20px;
@@ -484,7 +484,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 1rem;
-    color: var(--text-primary);
+    color: white;
     font-size: 1.5rem;
     font-weight: 600;
     transform-style: preserve-3d;
