@@ -674,6 +674,11 @@ body {
     display: none;
 }
 
+/* Hide edit modal raw file input so only custom upload area shows */
+#edit-image {
+    display: none;
+}
+
 .image-preview {
     margin-top: 1rem;
     text-align: center;
